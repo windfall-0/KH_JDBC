@@ -84,6 +84,30 @@ public class EmployeeService {
 		return dao.insertEmployee(emp);
 		
 	}
+
+
+
+
+
+	public int fireEmployee(int empId) {
+		return dao.fireEmployee(empId);
+	}
+
+
+
+
+
+	public int updateEmployee(String[] updateStrArr, int[] updateIntArr) {
+		return dao.updateEmployee(updateStrArr, updateIntArr);
+	}
+
+
+
+
+
+	public int updateDeptBonus(String deptCode, String bonusRate) {
+		return dao.updateDeptBonus(deptCode, bonusRate);
+	}
 	
 	
 	

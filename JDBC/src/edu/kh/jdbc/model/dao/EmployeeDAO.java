@@ -43,7 +43,7 @@ public class EmployeeDAO {
 
 			stat = conn.createStatement();
 
-			String sql = "SELECT * FROM EMPLOYEE ";
+			String sql = "SELECT * FROM EMPLOYEE2 ORDER BY EMP_ID";
 
 			rets = stat.executeQuery(sql);
 
@@ -76,7 +76,7 @@ public class EmployeeDAO {
 
 			stat = conn.createStatement();
 
-			String sql = "SELECT * FROM EMPLOYEE WHERE EMP_ID = " + empId;
+			String sql = "SELECT * FROM EMPLOYEE2 WHERE EMP_ID = " + empId;
 
 			rets = stat.executeQuery(sql);
 
@@ -110,7 +110,7 @@ public class EmployeeDAO {
 
 			stat = conn.createStatement();
 
-			String sql = "SELECT * FROM EMPLOYEE WHERE SALARY >= " + salary;
+			String sql = "SELECT * FROM EMPLOYEE2 WHERE SALARY >= " + salary;
 
 			rets = stat.executeQuery(sql);
 
@@ -155,7 +155,6 @@ public class EmployeeDAO {
 					rets.getString("ENT_YN").charAt(0)
 			);
 		} catch (SQLException e) {
-			e.printStackTrace();
 			return emp;
 		}
 		return emp;
@@ -172,8 +171,8 @@ public class EmployeeDAO {
 			Class.forName("oracle.jdbc.driver.OracleDriver");
 
 			conn = DriverManager.getConnection("jdbc:oracle:thin:@localHost:1521:XE", "KH_PCS", "KH1234");
-			
-			String sql = "SELECT * FROM EMPLOYEE VALUES(?,?,?,?,?,?,'S1',?,?,200,SYSDATE, NULL, 'N')";
+
+			String sql = "INSERT INTO EMPLOYEE2 VALUES(?,?,?,?,?,?,?,'S1',?,?,200,SYSDATE, NULL, 'N')";
 			// ? 위치 홀더
 			
 			pstmt = conn.prepareStatement(sql);
@@ -209,6 +208,121 @@ public class EmployeeDAO {
 		}
 		
 		return result;
+	}
+
+	public int fireEmployee(int empId) {
+		int result = 0;
+		try {
+			Class.forName("oracle.jdbc.driver.OracleDriver");
+
+			conn = DriverManager.getConnection("jdbc:oracle:thin:@localHost:1521:XE", "KH_PCS", "KH1234");
+			
+			String sql = "DELETE FROM EMPLOYEE2 WHERE EMP_ID = ?";
+			pstmt = conn.prepareStatement(sql);
+			
+		
+			pstmt.setInt(1, empId);
+			return pstmt.executeUpdate();
+			
+		} catch (Exception e) {
+			
+		} finally {
+			try {
+				if(pstmt!=null)pstmt.close();
+				if(conn !=null)conn.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		return result;
+	}
+
+	public int updateEmployee(String[] updateStrArr, int[] updateIntArr) {
+		int result = 0;
+		try {
+			Class.forName("oracle.jdbc.driver.OracleDriver");
+
+			conn = DriverManager.getConnection("jdbc:oracle:thin:@localHost:1521:XE", "KH_PCS", "KH1234");
+			conn.setAutoCommit(false);
+			
+			String sql = "UPDATE EMPLOYEE2 SET EMAIL = ?, PHONE = ?, SALARY = ? WHERE EMP_ID = ?";
+			// ? 위치 홀더
+			
+			pstmt = conn.prepareStatement(sql);
+			
+			
+			pstmt.setString(1, updateStrArr[0]);
+			pstmt.setString(2, updateStrArr[1]);
+			pstmt.setInt(3, updateIntArr[0]);
+			pstmt.setInt(4, updateIntArr[1]); 
+
+			
+
+			result = pstmt.executeUpdate();
+			
+			if (result==0) { 
+				conn.rollback();
+			} else {
+				conn.commit();
+			}
+			
+			/*
+			 * DML 사용 시 executeUpdate사용
+			 * DML 수행 후 성공한 행의 개수를 반환
+			 */
+			
+		} catch (Exception e) {
+			
+		} finally {
+			try {
+				if(pstmt!=null)pstmt.close();
+				if(conn !=null)conn.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		return result;
+		
+
+	}
+
+	public int updateDeptBonus(String deptCode, String bonusRate) {
+		int result = 0;
+		try {
+			Class.forName("oracle.jdbc.driver.OracleDriver");
+
+			conn = DriverManager.getConnection("jdbc:oracle:thin:@localHost:1521:XE", "KH_PCS", "KH1234");
+			conn.setAutoCommit(false);
+			
+			String sql = String.format("UPDATE EMPLOYEE2 SET BONUS = %s WHERE DEPT_CODE = '%s'",bonusRate,deptCode);
+			System.out.println(sql);
+			
+			stat = conn.createStatement();
+			
+			
+			result = stat.executeUpdate(sql);
+			
+			if (result==0) { 
+				conn.rollback();
+			} else {
+				conn.commit();
+			}
+
+			
+		} catch (Exception e) {
+			
+		} finally {
+			try {
+				if(stat!=null)stat.close();
+				if(conn !=null)conn.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		return result;
+		
 	}
 	
 	
